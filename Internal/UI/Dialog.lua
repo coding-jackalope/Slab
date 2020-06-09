@@ -83,10 +83,11 @@ end
 
 local function PruneResults(Items, DirectoryOnly)
 	local Result = {}
-
+	local Separator = FileSystem.Separator()
 	for I, V in ipairs(Items) do
 		if FileSystem.IsDirectory(V) then
 			if DirectoryOnly then
+				V = (string.sub(V,#V,#V) == Separator) and V or (V .. Separator)
 				insert(Result, V)
 			end
 		else
@@ -506,9 +507,11 @@ function Dialog.FileDialog(Options)
 			FileDialogItem('Item_' .. Index, V, true, Index)
 			Index = Index + 1
 		end
-		for I, V in ipairs(ActiveInstance.Files) do
-			FileDialogItem('Item_' .. Index, V, false, Index)
-			Index = Index + 1
+		if Options.Type ~= 'opendirectory' then
+			for I, V in ipairs(ActiveInstance.Files) do
+				FileDialogItem('Item_' .. Index, V, false, Index)
+				Index = Index + 1
+			end
 		end
 		ListBox.End()
 		LayoutManager.End()
